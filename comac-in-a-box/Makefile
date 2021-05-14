@@ -141,13 +141,13 @@ $(M)/omec: | $(M)/helm-ready /opt/cni/bin/simpleovs /opt/cni/bin/static $(M)/fab
 		--namespace omec \
 		--values $(CIABVALUES) \
 		omec-control-plane \
-		/home/vagrant/CiaB/automation-tools/comac-in-a-box/omec-control-plane && \
+		/home/vagrant/CiaB/omec-control-plane && \
 	kubectl rollout status -n omec statefulset spgwc && \
 	helm upgrade --install $(HELM_GLOBAL_ARGS) \
 		--namespace omec \
 		--values $(CIABVALUES) \
 		omec-user-plane \
-		/home/vagrant/CiaB/automation-tools/comac-in-a-box/omec-user-plane && \
+		/home/vagrant/CiaB/omec-user-plane && \
 	kubectl rollout status -n omec statefulset spgwu
 	touch $@
 
