@@ -1,6 +1,6 @@
 sudo apt update
 sudo apt install python3-pip build-essential -y
-cp -R /vagrant/* ~/
+#cp -R /vagrant/* ~/
 git clone https://github.com/michalke-it/CiaB.git
 cd ~/CiaB/automation-tools/comac-in-a-box
 export KUBESPRAY_VERSION=release-2.15
