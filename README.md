@@ -1,6 +1,6 @@
 # Description
-The ONF's opencord project provides a demonstration environment called 'COMAC in a Box' (CiaB). At the time of writing, this script is not functional anymore due to multiple API changes of underlying software (K8S, helm, Multus etc.) since it was last maintained. This repository provides a set of code changes to make the setup deployable on the current versions of kubespray and helm. This is not planned to be maintained but since the chart and Docker image versions are hardcoded, it should be fairly robust regarding updates.
-Since nested virtualuzation is required, this setup only runs with libvirt/KVM.
+The ONF's opencord project provides a demonstration environment called 'COMAC in a Box' (CiaB). At the time of writing, this script is not functional anymore due to multiple API changes of underlying software (K8S, helm, Multus etc.) since it was last maintained. This repository provides a set of code changes to make the setup deployable on the current versions of kubespray and helm. It replaces the steps performed at https://guide.opencord.org/profiles/comac/install/ciab.html so you can directly proceed with https://guide.opencord.org/operating_cord/operating_cord.html. For using this, keep in mind to use the super user ('vagrant ssh' then 'sudo su'). This is not planned to be maintained but since the chart and Docker image versions are hardcoded, it should be fairly robust regarding updates.
+Since nested virtualuzation is required, this setup only runs with libvirt/KVM, the VM requests 6 logical CPU threads and 12GB of RAM, it might be possible to reduce this way further.
 
 # Prerequisites
 install KVM/libvirt
