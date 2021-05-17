@@ -24,8 +24,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     SHELL
 
     config.vm.provider "libvirt" do |ubuntu|
-        ubuntu.memory = 20000
-        ubuntu.cpus = 14
+        ubuntu.memory = 12288
+        ubuntu.cpus = 6
     end
 
     config.vm.provision:shell, inline: $bootstrap
