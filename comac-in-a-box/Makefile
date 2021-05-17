@@ -136,7 +136,6 @@ $(M)/fabric: | $(M)/setup /opt/cni/bin/simpleovs /opt/cni/bin/static
 
 $(M)/omec: | $(M)/helm-ready /opt/cni/bin/simpleovs /opt/cni/bin/static $(M)/fabric
 	helm repo update
-	kubectl create namespace omec
 	helm upgrade --install $(HELM_GLOBAL_ARGS) \
 		--namespace omec \
 		--values $(CIABVALUES) \
@@ -156,6 +155,7 @@ $(M)/omec: | $(M)/helm-ready /opt/cni/bin/simpleovs /opt/cni/bin/static $(M)/fab
 $(BUILD)/openairinterface: | $(M)/setup
 	mkdir -p $(BUILD)
 	cd $(BUILD); git clone https://github.com/opencord/openairinterface.git
+	cp /home/vagrant/Dockerfile.ue $(BUILD)/openairinterface/
 
 $(M)/ue-image: | $(M)/k8s-ready $(BUILD)/openairinterface
 	cd $(BUILD)/openairinterface; \

@@ -1,3 +1,6 @@
 [submodule "automation-tools"]
 	path = automation-tools
 	url = https://github.com/opencord/automation-tools.git
+[submodule "openairinterface"]
+	path = openairinterface
+	url = https://github.com/opencord/openairinterface.git
