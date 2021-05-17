@@ -31,7 +31,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
     config.vm.provision:shell, inline: $bootstrap
-    config.vm.provision"file",source:"./omec-user-plane",destination:"/home/vagrant/"
-    config.vm.provision"file",source:"./comac-in-a-box/Makefile",destination:"/home/vagrant/"
     config.vm.provision:"shell", inline: $setup
 end
