@@ -156,14 +156,14 @@ $(M)/omec: | $(M)/helm-ready /opt/cni/bin/simpleovs /opt/cni/bin/static $(M)/fab
 $(BUILD)/openairinterface: | $(M)/setup
 	mkdir -p $(BUILD)
 	cd $(BUILD); git clone https://github.com/opencord/openairinterface.git
-	cp /home/vagrant/Dockerfile.ue $(BUILD)/openairinterface/
+#	cp /home/vagrant/Dockerfile.ue $(BUILD)/openairinterface/
 
 $(M)/ue-image: | $(M)/k8s-ready $(BUILD)/openairinterface
 	cd $(BUILD)/openairinterface; \
 	sudo docker build . --target lte-uesoftmodem \
-		--build-arg build_base=omecproject/oai-base:1.0.0 \
+		--build-arg build_base=omecproject/oai-base:1.1.0 \
 		--file Dockerfile.ue \
-		--tag omecproject/lte-uesoftmodem:1.0.0
+		--tag omecproject/lte-softmodem:1.1.0
 	touch $@
 
 $(M)/oaisim: | $(M)/ue-image $(M)/omec
