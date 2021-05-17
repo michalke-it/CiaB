@@ -26,12 +26,12 @@ spec:
           {
             "name": "s1u-net",
             "interface": {{ .Values.config.spgwu.s1u.device | quote }},
-            "ips": {{ .Values.config.spgwu.s1u.ip | quote }}
+            "ips": [{{ .Values.config.spgwu.s1u.ip | quote }}]
           },
           {
             "name": "sgi-net",
             "interface": {{ .Values.config.spgwu.sgi.device | quote }},
-            "ips": {{ .Values.config.spgwu.sgi.ip | quote }}
+            "ips": [{{ .Values.config.spgwu.sgi.ip | quote }}]
           }
         ]'
     spec:

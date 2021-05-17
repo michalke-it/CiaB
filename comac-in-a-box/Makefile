@@ -8,10 +8,13 @@ WORKSPACE	?= $(HOME)
 VENV		?= $(BUILD)/venv/ciab
 CIABVALUES	?= $(MAKEDIR)/comac-in-a-box-values.yaml
 
-KUBESPRAY_VERSION ?= release-2.11
+KUBESPRAY_VERSION ?= release-2.15
 DOCKER_VERSION	?= 18.09
-K8S_VERSION	?= v1.15.3
-HELM_VERSION	?= v2.16.1
+K8S_VERSION	?= v1.19.10
+HELM_VERSION	?= v3.5.3
+OMEC_UP_VER	?= 0.1.6
+OMEC_CP_VER	?= 0.1.31
+OAISIM_VER	?= 0.1.6
 
 # used to start logging/monitoring and other infrastructure charts
 INFRA_CHARTS	?=
@@ -105,8 +108,6 @@ $(M)/k8s-ready: | $(M)/setup $(BUILD)/kubespray $(VENV)/bin/activate $(M)/kubesp
 	touch $@
 
 $(M)/helm-ready: | $(M)/k8s-ready
-#	helm init --wait --client-only
-#	helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
 	helm repo add cord https://charts.opencord.org
 	touch $@
 
@@ -141,13 +142,15 @@ $(M)/omec: | $(M)/helm-ready /opt/cni/bin/simpleovs /opt/cni/bin/static $(M)/fab
 		--namespace omec \
 		--values $(CIABVALUES) \
 		omec-control-plane \
-		/home/vagrant/CiaB/omec-control-plane && \
+		/home/vagrant/CiaB/omec-control-plane \
+		--version $(OMEC_CP_VER) && \
 	kubectl rollout status -n omec statefulset spgwc && \
 	helm upgrade --install $(HELM_GLOBAL_ARGS) \
 		--namespace omec \
 		--values $(CIABVALUES) \
 		omec-user-plane \
-		/home/vagrant/CiaB/omec-user-plane && \
+		/home/vagrant/CiaB/omec-user-plane \
+		--version $(OMEC_UP_VER) && \
 	kubectl rollout status -n omec statefulset spgwu
 	touch $@
 
@@ -156,23 +159,25 @@ $(M)/omec: | $(M)/helm-ready /opt/cni/bin/simpleovs /opt/cni/bin/static $(M)/fab
 $(BUILD)/openairinterface: | $(M)/setup
 	mkdir -p $(BUILD)
 	cd $(BUILD); git clone https://github.com/opencord/openairinterface.git
-#	cp /home/vagrant/Dockerfile.ue $(BUILD)/openairinterface/
 
 $(M)/ue-image: | $(M)/k8s-ready $(BUILD)/openairinterface
 	cd $(BUILD)/openairinterface; \
 	sudo docker build . --target lte-uesoftmodem \
 		--build-arg build_base=omecproject/oai-base:1.1.0 \
 		--file Dockerfile.ue \
-		--tag omecproject/lte-softmodem:1.1.0
+		--tag omecproject/lte-uesoftmodem:1.1.0
 	touch $@
 
 $(M)/oaisim: | $(M)/ue-image $(M)/omec
 	sudo ip addr add 127.0.0.2/8 dev lo || true
 	$(eval mme_iface=$(shell ip -4 route list default | awk -F 'dev' '{ print $$2; exit }' | awk '{ print $$1 }'))
 	helm upgrade --install $(HELM_GLOBAL_ARGS) --namespace omec oaisim cord/oaisim -f $(CIABVALUES) \
-		--set config.enb.networks.s1_mme.interface=$(mme_iface)
+		--set config.enb.networks.s1_mme.interface=$(mme_iface) \
+		--version $(OAISIM_VER) 
+	echo "listing all deployments:"
+	helm ls -n omec
 	kubectl rollout status -n omec statefulset ue
-	@timeout 60s bash -c \
+	@timeout 600s bash -c \
 	"until ip addr show oip1 | grep -q inet; \
 	do \
 		echo 'Waiting for UE 1 gets IP address'; \
