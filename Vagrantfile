@@ -10,8 +10,6 @@ git clone --recurse-submodules https://github.com/michalke-it/CiaB.git /home/vag
 cp -R /home/vagrant/CiaB/comac-in-a-box /home/vagrant/CiaB/automation-tools/
 SCRIPT
 $setup = <<-SCRIPT
-cp /home/vagrant/Makefile /home/vagrant/CiaB/automation-tools/comac-in-a-box/
-cp -R /home/vagrant/omec-user-plane /home/vagrant/CiaB/
 cd /home/vagrant/CiaB/automation-tools/comac-in-a-box
 make
 make test
@@ -31,7 +29,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
     config.vm.provision:shell, inline: $bootstrap
-    config.vm.provision"file",source:"./omec-user-plane",destination:"/home/vagrant/"
-    config.vm.provision"file",source:"./comac-in-a-box/Makefile",destination:"/home/vagrant/"
     config.vm.provision:"shell", inline: $setup
 end
